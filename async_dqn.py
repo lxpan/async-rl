@@ -30,7 +30,7 @@ flags.DEFINE_integer('target_network_update_frequency', 10000, 'Reset the target
 flags.DEFINE_float('learning_rate', 0.0001, 'Initial learning rate.')
 flags.DEFINE_float('gamma', 0.99, 'Reward discount rate.')
 flags.DEFINE_integer('anneal_epsilon_timesteps', 1000000, 'Number of timesteps to anneal epsilon.')
-flags.DEFINE_string('summary_dir', '/tmp/summaries', 'Directory for storing tensorboard summaries')
+flags.DEFINE_string('summary_dir', 'logs', 'Directory for storing tensorboard summaries')
 flags.DEFINE_string('checkpoint_dir', '/tmp/checkpoints', 'Directory for storing model checkpoints')
 flags.DEFINE_integer('summary_interval', 5,
                      'Save training summary to file every n seconds (rounded '
@@ -231,17 +231,23 @@ def get_num_actions():
     return num_actions
 
 def train(session, graph_ops, num_actions, saver):
+    
     # Initialize variables
     session.run(tf.global_variables_initializer())
 
     # Initialize target network weights
     session.run(graph_ops["reset_target_network_params"])
 
+    # Initialize variables again
+    session.run(tf.global_variables_initializer())
+
     # Set up game environments (one per thread)
     envs = [gym.make(FLAGS.game) for i in range(FLAGS.num_concurrent)]
     
     summary_ops = setup_summaries()
     summary_op = summary_ops[-1]
+
+    
 
     summary_save_path = FLAGS.summary_dir + "/" + FLAGS.experiment
     writer = tf.summary.FileWriter(summary_save_path, session.graph)
