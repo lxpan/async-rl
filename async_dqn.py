@@ -87,7 +87,7 @@ def actor_learner_thread(thread_id, env, session, graph_ops, num_actions, summar
     initial_epsilon = 1.0
     epsilon = 1.0
 
-    print "Starting thread ", thread_id, "with final epsilon ", final_epsilon
+    print("Starting thread ", thread_id, "with final epsilon ", final_epsilon)
 
     time.sleep(3*thread_id)
     t = 0
@@ -165,7 +165,7 @@ def actor_learner_thread(thread_id, env, session, graph_ops, num_actions, summar
                 stats = [ep_reward, episode_ave_max_q/float(ep_t), epsilon]
                 for i in range(len(stats)):
                     session.run(update_ops[i], feed_dict={summary_placeholders[i]:float(stats[i])})
-                print "THREAD:", thread_id, "/ TIME", T, "/ TIMESTEP", t, "/ EPSILON", epsilon, "/ REWARD", ep_reward, "/ Q_MAX %.4f" % (episode_ave_max_q/float(ep_t)), "/ EPSILON PROGRESS", t/float(FLAGS.anneal_epsilon_timesteps)
+                print("THREAD:", thread_id, "/ TIME", T, "/ TIMESTEP", t, "/ EPSILON", epsilon, "/ REWARD", ep_reward, "/ Q_MAX %.4f" % (episode_ave_max_q/float(ep_t)), "/ EPSILON PROGRESS", t/float(FLAGS.anneal_epsilon_timesteps))
                 break
 
 def build_graph(num_actions):
@@ -268,7 +268,7 @@ def train(session, graph_ops, num_actions, saver):
 
 def evaluation(session, graph_ops, saver):
     saver.restore(session, FLAGS.checkpoint_path)
-    print "Restored model weights from ", FLAGS.checkpoint_path
+    print("Restored model weights from ", FLAGS.checkpoint_path)
     monitor_env = gym.make(FLAGS.game)
     monitor_env.monitor.start(FLAGS.eval_dir+"/"+FLAGS.experiment+"/eval")
 
@@ -279,7 +279,7 @@ def evaluation(session, graph_ops, saver):
     # Wrap env with AtariEnvironment helper class
     env = AtariEnvironment(gym_env=monitor_env, resized_width=FLAGS.resized_width, resized_height=FLAGS.resized_height, agent_history_length=FLAGS.agent_history_length)
 
-    for i_episode in xrange(FLAGS.num_eval_episodes):
+    for i_episode in range(FLAGS.num_eval_episodes):
         s_t = env.get_initial_state()
         ep_reward = 0
         terminal = False
@@ -290,7 +290,7 @@ def evaluation(session, graph_ops, saver):
             s_t1, r_t, terminal, info = env.step(action_index)
             s_t = s_t1
             ep_reward += r_t
-        print ep_reward
+        print(ep_reward)
     monitor_env.monitor.close()
 
 def main(_):
